@@ -1,18 +1,31 @@
+# frozen_string_literal: true
+
 module Marcel
   class MimeType
     BINARY = "application/octet-stream"
 
     class << self
       def extend(type, extensions: [], parents: [], magic: nil)
-        existing = Marcel::TYPES[type] || [[], [], ""]
-
-        extensions = (Array(extensions) + existing[0]).uniq
-        parents = (Array(parents) + existing[1]).uniq
-        comment = existing[2]
-
-        Magic.add(type, extensions: extensions, magic: magic, parents: parents, comment: comment)
+        extensions = (Array(extensions) + Array(Marcel::TYPE_EXTS[type])).uniq
+        parents = (Array(parents) + Array(Marcel::TYPE_PARENTS[type])).uniq
+        Magic.add(type, extensions: extensions, magic: magic, parents: parents)
       end
 
+      # Returns the most appropriate content type for the given file.
+      #
+      # The first argument should be a +Pathname+ or an +IO+. If it is a +Pathname+, the specified
+      # file will be opened first.
+      #
+      # Optional parameters:
+      # * +name+: file name, if known
+      # * +extension+: file extension, if known
+      # * +declared_type+: MIME type, if known
+      #
+      # The most appropriate type is determined by the following:
+      # * type declared by binary magic number data
+      # * type declared by the first of file name, file extension, or declared MIME type
+      #
+      # If no type can be determined, then +application/octet-stream+ is returned.
       def for(pathname_or_io = nil, name: nil, extension: nil, declared_type: nil)
         type_from_data = for_data(pathname_or_io)
         fallback_type = for_declared_type(declared_type) || for_name(name) || for_extension(extension) || BINARY
@@ -25,6 +38,7 @@ module Marcel
       end
 
       private
+
         def for_data(pathname_or_io)
           if pathname_or_io
             with_io(pathname_or_io) do |io|
@@ -86,10 +100,10 @@ module Marcel
         end
 
         def root_types(type)
-          if TYPES[type].nil? || TYPES[type][1].empty?
+          if TYPE_EXTS[type].nil? || TYPE_PARENTS[type].nil?
             [ type ]
           else
-            TYPES[type][1].map {|t| root_types t }.flatten
+            TYPE_PARENTS[type].map {|t| root_types t }.flatten
           end
         end
     end

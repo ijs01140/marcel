@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Marcel::MimeType.extend "text/plain", extensions: %w( txt asc )
 
 Marcel::MimeType.extend "application/illustrator", parents: "application/pdf"
@@ -31,7 +33,7 @@ Marcel::MimeType.extend "application/vnd.apple.numbers", extensions: %w( numbers
 Marcel::MimeType.extend "application/vnd.apple.keynote", extensions: %w( key ), parents: "application/zip"
 
 Marcel::MimeType.extend "audio/aac", extensions: %w( aac ), parents: "audio/x-aac"
-
+Marcel::MimeType.extend("audio/ogg", extensions: %w( ogg oga ), magic: [[0, 'OggS', [[29, 'vorbis']]]])
 
 Marcel::MimeType.extend "image/vnd.dwg", magic: [[0, "AC10"]]
 
@@ -57,8 +59,8 @@ Marcel::MimeType.extend(
   "application/vnd.ms-access",
   extensions: %w( mdb mde accdb accde ),
   magic: [
-    [0, "\x00\x01\x00\x00\x53\x74\x61\x6e\x64\x61\x72\x64\x20\x4a\x65\x74\x20\x44\x42"], # \x00\x01\x00\xStandard Jet DB
-    [0, "\x00\x01\x00\x00\x53\x74\x61\x6e\x64\x61\x72\x64\x20\x41\x43\x45\x20\x44\x42"], # \x00\x01\x00\xStandard ACE DB
+    [0, "\x00\x01\x00\x00\x53\x74\x61\x6e\x64\x61\x72\x64\x20\x4a\x65\x74\x20\x44\x42"], # "\x00\x01\x00Standard Jet DB"
+    [0, "\x00\x01\x00\x00\x53\x74\x61\x6e\x64\x61\x72\x64\x20\x41\x43\x45\x20\x44\x42"], # "\x00\x01\x00Standard ACE DB"
   ],
   parents: "application/x-msaccess"
 )

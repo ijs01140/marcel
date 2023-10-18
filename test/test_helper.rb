@@ -1,10 +1,8 @@
 require 'minitest/autorun'
-require 'byebug'
-
 require 'marcel'
 require 'pathname'
 
-class Marcel::TestCase < MiniTest::Test
+class Marcel::TestCase < Minitest::Test
   class << self
     def setup(&block)
       define_method(:setup, &block)
@@ -33,7 +31,7 @@ class Marcel::TestCase < MiniTest::Test
       FileUtils.chdir fixture_path(folder) do
         Dir["**/*.*"].map do |name|
           if File.file?(name)
-            _, content_type, extra, extension = *name.match(/\A([^\/]+\/[^\/]*)\/?(.*)\.(\w+)\Z/)
+            _, content_type, extra, _ = *name.match(/\A([^\/]+\/[^\/]*)\/?(.*)\.(\w+)\Z/)
             extra = nil if content_type[-content_type.size..-1] == extra
             yield files("#{folder}/#{name}"), name, content_type
           end

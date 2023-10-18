@@ -1,8 +1,6 @@
 # Marcel
 
-Marcel attempts to choose the most appropriate content type for a given file by looking at the binary data, the filename, and any declared type (perhaps passed as a request header):
-
-It's used like this:
+Marcel attempts to choose the most appropriate content type for a given file by looking at the binary data, the filename, and any declared type (perhaps passed as a request header). This is done via the `Marcel::MimeType.for` method, and is used like this:
 
 ```ruby
 Marcel::MimeType.for Pathname.new("example.gif")
@@ -41,6 +39,14 @@ This only happens when the type from the filename is a more specific type of tha
 Marcel::MimeType.for Pathname.new("example.png"), name: "example.ai"
 #  => "image/png"
 # As "application/illustrator" is not a more specific type of "image/png", the filename is ignored
+```
+
+Custom file types not supported by Marcel can be added using `Marcel::MimeType.extend`. 
+
+```ruby
+Marcel::MimeType.extend "text/custom", extensions: %w( customtxt )
+Marcel::MimeType.for name: "file.customtxt"
+#  => "text/custom"
 ```
 
 ## Motivation
